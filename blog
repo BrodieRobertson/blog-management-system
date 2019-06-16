@@ -1,0 +1,31 @@
+#!/bin/sh
+
+main() {
+    echo "Application Start"
+}
+
+draft() {
+    echo "Draft"
+}
+
+edit_draft() {
+    echo "Edit Draft"
+}
+
+delete_draft() {
+    echo "Delete Draft"
+}
+
+publish() {
+    echo "Publish Draft"
+}
+
+edit_published() {
+    echo "Edit Published"
+}
+
+delete_published() {
+    echo "Delete Published"
+}
+
+main()
