@@ -1,9 +1,5 @@
 #!/bin/sh
 
-main() {
-    echo "Application Start"
-}
-
 draft() {
     echo "Draft"
 }
@@ -28,4 +24,18 @@ delete_published() {
     echo "Delete Published"
 }
 
-main()
+main() {
+    echo -e "Blog Management System\nEnter the characters contained in the brackets for the selected mode\n(d)raft a post\n(e)dit a (d)raft\n(d)elete a (d)raft\n(p)ublish a post\n(e)dit a (p)ubished post\n(d)elete a (p)ublished post"
+    read -p "Selected Mode: " mode
+    case "$mode" in
+        "d") draft ;;
+        "ed") edit_draft ;;
+        "dd") delete_draft ;;
+        "p") publish ;;
+        "ep") edit_published ;;
+        "dp") delete_published ;;
+        *) echo "Invalid selection\n" && main ;;
+    esac
+}
+
+main
