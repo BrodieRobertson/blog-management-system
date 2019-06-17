@@ -1,11 +1,34 @@
 #!/bin/sh
 
+drafts_directory="$HOME/blog/drafts"
+published_directory="$HOME/blog/published"
+
 draft() {
-    echo "Draft"
+    if read -p "Enter a name for the post: " name; then
+        if $EDITOR "$drafts_directory"'/'"$name"'.html' && test -f "$drafts_directory"'/'"$name"'.html'; then
+            echo -e "\nDraft saved successfully returning to main menu" && main
+        else
+            echo -e "\nDraft not saved returing to main menu" && main
+        fi
+    else
+        echo -e "\n" && draft
+    fi
 }
 
 edit_draft() {
-    echo "Edit Draft"
+    if [ -n "$(find "$drafts_directory" -maxdepth 0 -type d -empty | grep .)" ]; then
+        echo -e "\nNo Drafts available, returning to main menu" && main
+    else
+        drafts="$(find $drafts_directory -name *.html -type f -exec basename {} \;)"
+        echo -e "Drafts available:" && echo -e "$drafts" | sed 's/.html//' | nl && read -p "Enter the number for the selected draft: " selected
+        file=$(echo "$drafts_directory"'/'"$(echo -e "$drafts" | sed ""$selected"q;d")")
+
+        if [ -f "$file" ]; then
+            $EDITOR "$file" && main
+        else
+            echo -e "File not found, returning to the main menu\n" && main
+        fi
+    fi
 }
 
 delete_draft() {
@@ -25,7 +48,8 @@ delete_published() {
 }
 
 main() {
-    echo -e "Blog Management System\nEnter the characters contained in the brackets for the selected mode\n(d)raft a post\n(e)dit a (d)raft\n(d)elete a (d)raft\n(p)ublish a post\n(e)dit a (p)ubished post\n(d)elete a (p)ublished post"
+    mkdir -p "$drafts_directory" & > /dev/null 2>&1 && mkdir -p "$published" > /dev/null 2>&1
+    echo -e "Enter the characters contained in the brackets for the selected mode\n(d)raft a post\n(e)dit a (d)raft\n(d)elete a (d)raft\n(p)ublish a post\n(e)dit a (p)ubished post\n(d)elete a (p)ublished post\n(q)uit"
     read -p "Selected Mode: " mode
     case "$mode" in
         "d") draft ;;
@@ -34,7 +58,8 @@ main() {
         "p") publish ;;
         "ep") edit_published ;;
         "dp") delete_published ;;
-        *) echo "Invalid selection\n" && main ;;
+        "q") exit 0 ;;
+        *) echo -e "Invalid selection\n" && main ;;
     esac
 }
 
